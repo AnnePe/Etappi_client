@@ -2,12 +2,12 @@ import React, { useState, useEffect, Alert } from 'react';
 
 function Lipunmyynti () {
 
-    const [status, setStatus] = useState('');
-    const [id, setId] = useState('');
-    const [lippu, setLippu] = useState('');
-   const [linkki,setLinkki] = useState('');
-   const [lippulinkki,setLippulinkki] = useState('');
-   const [tapahtumat, setTapahtumat] = useState('');
+  const [status, setStatus] = useState('');
+  const [id, setId] = useState('');
+  const [lippu, setLippu] = useState('');
+  const [linkki,setLinkki] = useState('');
+  const [lippulinkki,setLippulinkki] = useState('');
+  const [tapahtumat, setTapahtumat] = useState('');
 
   // const timestamp = Date.now(); // This would be the timestamp you want to format
 
@@ -18,29 +18,50 @@ function Lipunmyynti () {
     .then(response => response.json()
     .then(responseJson => setLippu(responseJson))
     .catch(error => { 
-      Alert.alert('Error', error); 
+      console.log('Error', error); 
     }));
     console.log(lippu);
     setStatus('onnistui get')
     setLinkki(lippu._links.self.href);
     setLippulinkki(lippu._links.liput.href);
   }
+  
   const haeMyyntiliput = () => {
      
     fetch(`${lippulinkki}`)
     .then(response => response.json()
     .then(responseJson => setTapahtumat(responseJson))
     .catch(error => { 
-      Alert.alert('Error', error); 
+      console.log('Error', error); 
     }));
     console.log(tapahtumat);
     setStatus('myyntitapahtuman liput haettu')
+    console.log(tapahtumat._embedded.lippus);
    // setLinkki(lippu._links.self.href);
   //  setLippulinkki(lippu._links.liput.href);
   }
-  //useEffect(() => {
-  //  haeLippu();
-  //}, []);
+
+
+  const Lipuntiedot = ({ lippu }) => 
+  <p>
+    {lippu.lippukoodi} {lippu.hinta}€ {lippu._links.self.href}
+  </p>
+  
+  const Liput = () => {
+    return (
+      Object.values(tapahtumat._embedded.lippus).map(lippu =>
+        <Lipuntiedot 
+        key={lippu.id}
+        lippu={lippu}
+        />)
+    )
+  }
+/*
+  const Liput = () => {
+    return (
+      <div>tekstiä</div>
+    )
+  }*/
 
   const vaihdaId = (event) => {
     event.preventDefault();
@@ -87,9 +108,13 @@ function Lipunmyynti () {
       })
     }
 
+  /*
+
+  */
 
   return (
     <div>
+
       <form onSubmit={vaihdaId}>
         <label>
           Anna myyntitapahtuma id(paina 2 kertaa että päivittyy näytölle): 
@@ -121,6 +146,7 @@ function Lipunmyynti () {
         <button onClick={haeMyyntiliput}>
           Näytä myyntitapahtuman liput
         </button>
+        <Liput />
       </p>
       <p> 
         <div>{status}</div>
