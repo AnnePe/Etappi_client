@@ -56,7 +56,7 @@ function Lipputarkistus () {
     <div>
       <form onSubmit={vaihdaId}>
         <label>
-          Hae lippu: 
+          Hae lippu id (paina get 2 krt): 
           <input
             type="text"
             value={id}

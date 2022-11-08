@@ -33,8 +33,8 @@ function Lipunmyynti () {
     .catch(error => { 
       Alert.alert('Error', error); 
     }));
-    console.log(lippu);
-    setStatus('onnistui get')
+    console.log(tapahtumat);
+    setStatus('myyntitapahtuman liput haettu')
    // setLinkki(lippu._links.self.href);
   //  setLippulinkki(lippu._links.liput.href);
   }
@@ -49,21 +49,44 @@ function Lipunmyynti () {
 
  const lisaaLippu = () => {
   //https://etappi-ticketguru.herokuapp.com/api/myyntitapahtumat/1/liput
-   fetch(`${lippulinkki}`, { 
+  //https://etappi-ticketguru.herokuapp.com/api/liput/
+  // "myyntitapahtuma": "https://etappi-ticketguru.herokuapp.com/api/myyntitapahtumat/3" 
+  // fetch(`${lippulinkki}`, { 
+  fetch(`https://etappi-ticketguru.herokuapp.com/api/liput`, { 
       method: "POST",
-   //   body: JSON.stringify({"toteutunut":"a"}),
+      body: JSON.stringify({"tapahtumalipputyyppi": "https://etappi-ticketguru.herokuapp.com/api/tapahtumalipputyypit/1",
+        "myyntitapahtuma": `https://etappi-ticketguru.herokuapp.com/api/myyntitapahtumat/${id}` } ),
       headers: {
         "Content-Type": "application/json"
       },
     }).then(function(response) {
   
-    setStatus('Onnistuiko POST?');
+    setStatus('Lippu lisätty haetulle myyntitapahtumalle');
       return response.text()
     }, function(error) {
   //    error.message //=> String
     setStatus('erhe');
     })
   }
+  const luoMyyntitapahtuma = () => {
+    //https://etappi-ticketguru.herokuapp.com/api/myyntitapahtumat/
+    //{    "kayttaja": "http://localhost:8080/api/kayttajat/1" }
+        fetch(`https://etappi-ticketguru.herokuapp.com/api/myyntitapahtumat/`, { 
+        method: "POST",
+       body: JSON.stringify({"kayttaja":"http://localhost:8080/api/kayttajat/1"}),
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then(function(response) {
+    
+      setStatus('Myyntitapahtuma lisätty');
+        return response.text()
+      }, function(error) {
+    //    error.message //=> String
+      setStatus('erhe');
+      })
+    }
+
 
   return (
     <div>
@@ -84,12 +107,16 @@ function Lipunmyynti () {
      myyntitapahtuma url {linkki}<br />
      lippu url {lippulinkki}<br />
         Toteutunut {lippu.toteutunut}<br />
+       tähän vois tuoda allekain tehdyt liput haeMyyntiliput<br /><br />
        
        
        
 
         <button onClick={lisaaLippu}>
           Lisää lippu
+        </button>
+        <button onClick={luoMyyntitapahtuma}>
+          Luo myyntitapahtuma
         </button>
         <button onClick={haeMyyntiliput}>
           Näytä myyntitapahtuman liput
